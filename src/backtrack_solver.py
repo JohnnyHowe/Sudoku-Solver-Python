@@ -1,9 +1,9 @@
 from board import Board
-import time
 
 
 class BacktrackSolver:
-    """ Solve the sudoku at "game.txt" by backtracking. """
+    """ Solve the sudoku at "game.txt" by backtracking.
+    This method is pretty much a depth-first search. """
 
     def __init__(self, filename="game.txt", show_solving=False):
         """ Load up the board, solve it. """
@@ -14,7 +14,6 @@ class BacktrackSolver:
         print("=" * 21)
         BacktrackSolver.backtrack(self.board, show_solving)
         print(self.board)
-
 
     @staticmethod
     def backtrack(board, show_solving=False):
@@ -60,3 +59,7 @@ class BacktrackSolver:
                 if number is None:
                     return x, y
         return None
+
+
+if __name__ == "__main__":
+    BacktrackSolver(show_solving=True)
