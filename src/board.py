@@ -44,11 +44,14 @@ class Board(Section):
         The file is to be layed out in a 9x9 grid of characters directly representing the game.
         Blanks are to be left as spaces. """
         file = open(filename, "r")
-        board_raw = file.read().replace("\n", "")
+        board_raw = file.read()
         file.close()
-        for index, char in enumerate(board_raw):
-            if char != "\n":
-                self.set_board_item(char, index % 9, index // 9)
+        for y, line in enumerate(board_raw.splitlines()):
+            for x, char in enumerate(line):
+                if x >= 9:
+                    break
+                if char != " ":
+                    self.set_board_item(int(char), x, y)
 
     def get_copy(self):
         """ Return a copy of the board. """
@@ -85,7 +88,17 @@ class Board(Section):
         Returns:
             item (number): the number on the board at (x, y)
         """
-        self.get_at(x // 3, y // 3).get_at(x % 3, y % 3)
+        return self.get_at(x // 3, y // 3).get_at(x % 3, y % 3)
+
+    def is_solved(self):
+        """ Is the board solved?
+        Is solved if it is valid and there are no blank spots. """
+        for x in range(9):
+            for y in range(9):
+                if self.get_board_item(x, y) is None:
+                    return False    # There's a blank spot!
+        # Only gets to this line if there are no blanks
+        return self.is_valid()
 
     def is_valid(self):
         """ Is the board valid?
@@ -118,9 +131,10 @@ class Board(Section):
         for x in range(9):
             number = self.get_board_item(x, y)
             if number is not None:
-                if taken_numbers[number]:
+                index = int(number) - 1
+                if taken_numbers[index]:
                     return False
-                taken_numbers[number] = 1
+                taken_numbers[index] = 1
         return True
 
     def is_line_valid_vertical(self, x):
@@ -133,9 +147,10 @@ class Board(Section):
         for y in range(9):
             number = self.get_board_item(x, y)
             if number is not None:
-                if taken_numbers[number]:
+                index = int(number) - 1
+                if taken_numbers[index]:
                     return False
-                taken_numbers[number] = 1
+                taken_numbers[index] = 1
         return True
 
     def is_section_valid(self, section_x, section_y):
@@ -147,10 +162,10 @@ class Board(Section):
             for y in range(3):
                 number = section.get_at(x, y)
                 if number is not None:
-                    # print(number, x, y)
-                    if taken_numbers[number] > 0:
+                    index = number - 1
+                    if taken_numbers[index] > 0:
                         return False
-                    taken_numbers[number] = 1
+                    taken_numbers[index] = 1
         return True
 
     def __str__(self):
@@ -182,4 +197,4 @@ class Board(Section):
                 # print()
                 string += "\n"
 
-        return string
+        return string[:-1]  # Remove the newline

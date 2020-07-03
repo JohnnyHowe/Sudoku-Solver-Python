@@ -1,10 +1,9 @@
-# from console_game import ConsoleGame
-# from solver import Solver
-
+import time
 from backtrack_solver import BacktrackSolver
 
-solver = BacktrackSolver()
-print(solver.board.is_valid())
-
-# game = ConsoleGame()
-# game.show_board()
+start_time = time.time()
+solver = BacktrackSolver(show_solving=False)
+end_time = time.time()
+print()
+print(str(round(end_time - start_time, 3)) + "s taken to solve.")
+input()
