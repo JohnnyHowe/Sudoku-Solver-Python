@@ -44,17 +44,6 @@ class Solver(ABC):
             board.set_board_item(candidates, x, y)
 
     @staticmethod
-    def partial_solve(board):
-        """ With only basic reasoning, partially solve the board.
-        This means when a cell can only be one value, set it to that value.
-        This continues until no change is found
-        Note: this may fully solve the puzzle, may also solve no part of it
-        Parameters:
-              board (Board): sudoku to partially solve
-        """
-        raise Exception("NOT DONE YET")
-
-    @staticmethod
     def get_blanks(board):
         """ Finds all the blank spots in the sudoku at self.board.
         A cell is considered blank if it does not contain an integer

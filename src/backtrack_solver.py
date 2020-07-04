@@ -69,6 +69,7 @@ class BacktrackSolver(Solver):
                 return x, y
         return None
 
+
 if __name__ == "__main__":
     import time
     print("Solving...")
