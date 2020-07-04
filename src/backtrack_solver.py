@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+# from abc import ABC, abstractmethod
 from solver import Solver
 
 
@@ -7,7 +7,6 @@ class BacktrackSolver(Solver):
     This method is pretty much a depth-first search. """
 
     @staticmethod
-    @abstractmethod
     def solve(filename="game.txt", show_solving=False):
         """ Solve the sudoku at filename and return it.
         Parameters:
@@ -74,9 +73,15 @@ if __name__ == "__main__":
     import time
     print("Solving...")
     start_time = time.time()
-    solved_board = BacktrackSolver.solve(show_solving=False)
+    solved_board = BacktrackSolver.solve(show_solving=True)
     end_time = time.time()
     print("Solved sudoku:")
     print(solved_board)
     print("Completed in {}s".format(round(end_time - start_time, 3)))
+
+    for y in range(9):
+        for x in range(9):
+            print(solved_board.get_board_item(x, y), end="")
+        print()
+
     input()

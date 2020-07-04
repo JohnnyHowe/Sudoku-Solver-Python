@@ -30,6 +30,21 @@ class Section:
         """
         self._slots[x + y * 3] = item
 
+    def __str__(self):
+        """ Return a basic string representation. """
+        column_widths = [1, ] * 3
+        for x in range(3):
+            for y in range(3):
+                column_widths[x] = max(column_widths[x], len(str(self.get_at(x, y))))
+
+        string = ""
+        for y in range(3):
+            for x in range(3):
+                cell = self.get_at(x, y)
+                string += str(cell) + " " * (1 + column_widths[x] - len(str(cell)))
+            string += "\n"
+        return string[:-1]
+
 
 class Board(Section):
     """ Class to represent the board,
@@ -78,6 +93,14 @@ class Board(Section):
         """
         self.get_at(x // 3, y // 3).set_at(number, x % 3, y % 3)
 
+    def contains_value(self, x, y):
+        """ Is the cell at (x, y) occupied by an integer?
+        Parameters:
+            x (int): x ordinate
+            y (int): y ordinate
+        """
+        return type(self.get_board_item(x, y)) == int
+
     def get_board_item(self, x, y):
         """ Get the item at x, y on the board.
         x and y are to between 0 and 8 (inclusive)
@@ -91,6 +114,24 @@ class Board(Section):
         if not (0 <= x <= 8 and 0 <= y <= 8):
             raise IndexError("Cannot get item at ({}, {})".format(x, y))
         return self.get_at(x // 3, y // 3).get_at(x % 3, y % 3)
+
+    def get_column(self, x):
+        """ Get a copy of the column at y
+        Parameters:
+            x (int): x ordinate of row to get
+        Returns:
+            row (list): list of items in row (includes the lists of candidates)
+        """
+        return [self.get_board_item(x, y) for y in range(9)]
+
+    def get_row(self, y):
+        """ Get a copy of the row at y
+        Parameters:
+            y (int): y ordinate of row to get
+        Returns:
+            row (list): list of items in row (includes the lists of candidates)
+        """
+        return [self.get_board_item(x, y) for x in range(9)]
 
     def is_solved(self):
         """ Is the board solved?
