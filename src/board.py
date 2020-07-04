@@ -88,6 +88,8 @@ class Board(Section):
         Returns:
             item (number): the number on the board at (x, y)
         """
+        if not (0 <= x <= 8 and 0 <= y <= 8):
+            raise IndexError("Cannot get item at ({}, {})".format(x, y))
         return self.get_at(x // 3, y // 3).get_at(x % 3, y % 3)
 
     def is_solved(self):
@@ -102,6 +104,7 @@ class Board(Section):
 
     def is_valid(self):
         """ Is the board valid?
+        If a cell has a list it is ignored
         Does it violate any of the constraints?
         - is there two or more of the same numbers in the same section
         - are there two or more of the same numbers in the same line
@@ -124,13 +127,14 @@ class Board(Section):
     def is_line_valid_horizontal(self, y):
         """ Is the horizontal line valid?
         Line is valid if no number is repeated twice or more.
+        If the cell has a list it is ignored
         Returns:
             valid (bool): whether the line is valid
         """
         taken_numbers = [0, ] * 9
         for x in range(9):
             number = self.get_board_item(x, y)
-            if number is not None:
+            if number is not None and type(number) == int:
                 index = int(number) - 1
                 if taken_numbers[index]:
                     return False
@@ -140,13 +144,14 @@ class Board(Section):
     def is_line_valid_vertical(self, x):
         """ Is the vertical line valid?
         Line is valid if no number is repeated twice or more.
+        If a cell has a list it is ignored
         Returns:
             valid (bool): whether the line is valid
         """
         taken_numbers = [0, ] * 9
         for y in range(9):
             number = self.get_board_item(x, y)
-            if number is not None:
+            if number is not None and type(number) == int:
                 index = int(number) - 1
                 if taken_numbers[index]:
                     return False
@@ -155,13 +160,14 @@ class Board(Section):
 
     def is_section_valid(self, section_x, section_y):
         """ Is the section valid?
+        If a cell has a list it is ignored
         invalid if there are two or more of the same number in the section. """
         section = self.get_at(section_x, section_y)
         taken_numbers = [0, ] * 9
         for x in range(3):
             for y in range(3):
                 number = section.get_at(x, y)
-                if number is not None:
+                if number is not None and type(number) == int:
                     index = number - 1
                     if taken_numbers[index] > 0:
                         return False
@@ -170,31 +176,29 @@ class Board(Section):
 
     def __str__(self):
         """ Create a nice string representation of the board. """
+
+        # Find how wide each column has to be
+        column_widths = [1, ] * 9
+        for x in range(9):
+            for y in range(9):
+                column_widths[x] = max(column_widths[x], len(str(self.get_board_item(x, y))))
+        total_width = sum(column_widths) + 12
+
         string = ""
         for y in range(9):
             for x in range(9):
 
-                section = self.get_at(x // 3, y // 3)
-                number = section.get_at(x % 3, y % 3)
+                cell = self.get_board_item(x, y)
+                string += str(cell) + " " * (column_widths[x] - len(str(cell)) + 1)
 
-                if x % 3 == 0 and x != 0:
-                    # print("|", end=" ")
+                # Vertical section split
+                if x == 2 or x == 5:
                     string += "| "
 
-                if number is None:
-                    char = " "
-                else:
-                    char = str(number)
-                # print(char, end=" ")
-                string += char + " "
+            string += "\n"
 
-            # Print a new horizontal line to separate sections
-            # If no new line is needed, print a new line
-            if y % 3 == 2 and y != 8:
-                # print("\n" + "-" * 21)
-                string += "\n" + ("-" * 21) + "\n"
-            else:
-                # print()
-                string += "\n"
+            # Horizontal section split
+            if y == 2 or y == 5:
+                string += "-" * total_width + "\n"
 
-        return string[:-1]  # Remove the newline
+        return string[:-1]  # Gotta remove the last newline
